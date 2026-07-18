@@ -97,16 +97,26 @@ changes, something a forward-only greedy loop can never do.
 
 ## The one-figure summary
 
-![headline](results/headline.png)
+![headline](results/headline_transfer.png)
+
+Each point is one recipe change, judged twice: by a cheap 10-second
+training run (x-axis) and by the real 80-second target (y-axis). If cheap
+verdicts transferred, every point would hug the dashed diagonal. Instead the
+two most valuable architecture changes — **rotary embeddings** (worth 4×
+training time) and RMSNorm+SwiGLU — sit in the false-negative quadrant: the
+cheap judge would have discarded them. That is the assumption every
+low-fidelity autoresearch loop makes silently, made measurable — and why
+this repo wraps the loop in trust-region distrust logic (§ below).
+(Regenerate: `python make_counterexample.py`.)
+
+## Flagship result
+
+![time to match quality](results/headline.png)
 
 **The metric: time-to-match-quality.** For each recipe, solve its fitted
 scaling law for the training time that reaches the baseline's 80-second
-loss. Autoresearch compressed 80 s of training into ~8 s — a ~10×
-effective-training-time multiplier — with the learning rate alone worth
-2.7× and the full stack worth the rest. (Regenerate with
-`python make_headline.py`; single-seed fits, replicate sd ≈ 0.01 nats.)
-
-## Flagship result
+loss: autoresearch compressed 80 s of training into ~8 s (`python
+make_headline.py`).
 
 **The winning stack (`combo` = lr 3e-3 + rotary + RMSNorm/SwiGLU + dropout 0 +
 batch 128) reaches the baseline's 80-second loss in under 10 seconds — a

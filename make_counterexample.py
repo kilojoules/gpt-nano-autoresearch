@@ -83,11 +83,7 @@ def style_axes(ax, xlabel, ylabel):
     ax.set_facecolor(SURFACE)
 
 
-def main():
-    fig, (axL, axR) = plt.subplots(1, 2, figsize=(11.5, 5.2), dpi=150)
-    fig.patch.set_facecolor(SURFACE)
-
-    # ---- left: sweep transfer ----
+def draw_sweep_panel(axL, title, dashed_caption=True):
     pts = sweep_points()
     lim = 0.33
     axL.fill_betweenx([0, 0.27], -lim, 0, color=C_FN, alpha=0.06, zorder=0)
@@ -96,18 +92,49 @@ def main():
     axL.set_xlim(-lim, lim)
     axL.set_ylim(-0.19, 0.27)
     ann = {"rotary": (8, 10), "llama_mlp": (8, 8), "cosine": (8, -12),
-           "lr_3e3": (-30, 10), "wtie": (8, -4)}
+           "lr_3e3": (-30, 10), "wtie": (-34, -4)}
     for name, x, y in pts:
         if name in ann:
             axL.annotate(name, (x, y), textcoords="offset points",
                          xytext=ann[name], fontsize=9, color=INK)
     axL.text(-0.315, 0.245, "FALSE NEGATIVES\ncheap judge discards a winner",
              fontsize=9, color=C_FN, fontweight="bold", va="top")
-    axL.text(0.06, -0.175, "dashed = perfect transfer", fontsize=8.5, color=MUTED)
+    if dashed_caption:
+        axL.text(0.06, -0.175, "dashed = perfect transfer", fontsize=8.5, color=MUTED)
     style_axes(axL, "improvement according to a 10 s run  (nats, + = better)",
                "measured improvement at 80 s  (nats, + = better)")
-    axL.set_title("Single changes: the cheap judge inverts\non the changes that matter most",
-                  loc="left", color=INK, fontsize=10.5)
+    axL.set_title(title, loc="left", color=INK, fontsize=11)
+    return pts
+
+
+def make_headline_standalone():
+    fig, ax = plt.subplots(figsize=(8.0, 5.8), dpi=150)
+    fig.patch.set_facecolor(SURFACE)
+    draw_sweep_panel(ax, "Cheap experiments judge expensive ones wrong —\n"
+                         "exactly on the changes that matter most",
+                     dashed_caption=False)
+    from matplotlib.lines import Line2D
+    handles = [Line2D([], [], marker="o", ls="", color=C_AGREE, ms=8, mec=SURFACE,
+                      label="verdicts agree"),
+               Line2D([], [], marker="D", ls="", color=C_FN, ms=8, mec=SURFACE,
+                      label="false negative: 10 s judge rejects an 80 s winner"),
+               Line2D([], [], ls="--", color=MUTED, lw=1.2,
+                      label="perfect transfer")]
+    ax.legend(handles=handles, loc="lower right", frameon=False, fontsize=9,
+              labelcolor=INK2)
+    fig.tight_layout()
+    out = os.path.join(RESULTS, "headline_transfer.png")
+    fig.savefig(out, facecolor=SURFACE, bbox_inches="tight")
+    print("wrote", out)
+
+
+def main():
+    fig, (axL, axR) = plt.subplots(1, 2, figsize=(11.5, 5.2), dpi=150)
+    fig.patch.set_facecolor(SURFACE)
+
+    # ---- left: sweep transfer ----
+    draw_sweep_panel(axL, "Single changes: the cheap judge inverts\n"
+                          "on the changes that matter most")
 
     # ---- right: campaign step sizes ----
     axR.axhspan(-0.019, 0.019, color=MUTED, alpha=0.13, zorder=0)
@@ -157,3 +184,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    make_headline_standalone()
