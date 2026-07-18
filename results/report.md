@@ -6,6 +6,7 @@ Fitted law: `L(t) = L_inf + A * t^-alpha`. *Effective time multiplier* = how muc
 
 | variant | L @ 10s | L @ 20s | L @ 40s | L @ 80s | L_inf | A | alpha | eff. time x |
 |---|---|---|---|---|---|---|---|---|
+| tr_best | 2.1065 | 1.8539 | 1.7044 | 1.6155 | 1.486 | 3.523 | 0.754 | 117.92x |
 | combo | 2.1380 | 1.9217 | 1.7763 | 1.6650 | 1.407 | 2.298 | 0.498 | 61.60x |
 | lr_3e3 | 2.4397 | 2.3094 | 2.1366 | 1.9507 | 0.000 | 3.143 | 0.106 | 4.51x |
 | rotary | 2.7317 | 2.3696 | 2.1390 | 1.9665 | 1.625 | 4.023 | 0.561 | 4.04x |
@@ -23,6 +24,7 @@ Fitted law: `L(t) = L_inf + A * t^-alpha`. *Effective time multiplier* = how muc
 
 ## Variant descriptions
 
+- **tr_best** — trust-region search result: batch_size=176, dropout=0.01289, lr=0.005352, rmsnorm->False, weight_decay=0.1654
 - **combo** — stack of the round-1 winners: lr 3e-3 + rotary + RMSNorm/SwiGLU + dropout 0 + batch 128 (cosine and weight tying excluded — both hurt at these budgets)
 - **lr_3e3** — learning rate 5e-4 -> 3e-3
 - **rotary** — rotary position embeddings instead of learned absolute

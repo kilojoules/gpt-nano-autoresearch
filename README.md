@@ -66,22 +66,26 @@ for recipe search:
 | trust radius Δ | max recipe step per iteration: LR/batch/wd move ≤ ×2^Δ (log-space), dropout ±0.05Δ, ≤ 1–2 architecture-flag flips |
 | ratio test ρ | actual 80 s improvement ÷ surrogate-predicted improvement |
 
-It works in practice. In the first campaign iteration, the surrogate predicted
-an improvement of 0.081 for its favorite candidate; the confirm run delivered
-0.009 — ρ = 0.11. The loop kept the (real but small) win and **halved the
-trust radius**: the search became more conservative at the exact moment the
+It works in practice. Over a 6-iteration campaign (~35 min on a laptop,
+starting from `combo`): iteration 1's surrogate predicted an improvement of
+0.081 and the confirm run delivered 0.009 — ρ = 0.11 — so the loop kept the
+(real but small) win and **halved the trust radius**. It accepted again at
+iteration 2, then rejected four in a row as ρ stayed near zero, walking the
+radius down 1.0 → 0.1: the search became conservative at exactly the rate the
 20 s judge was shown to over-promise. That is the behavior today's
-autoresearch loops are missing.
+autoresearch loops are missing. Net result: `tr_best` (batch 176, lr 5.4e-3,
+**RMSNorm removed**, wd 0.165, dropout 0.013) reached **1.6155** at 80 s vs
+combo's 1.665 — and notably *reverted* one of the greedy round's adopted
+changes, something a forward-only greedy loop can never do.
 
 ## Flagship result
 
 **The winning stack (`combo` = lr 3e-3 + rotary + RMSNorm/SwiGLU + dropout 0 +
 batch 128) reaches the baseline's 80-second loss in under 10 seconds — a
-measured >8× effective-training-time speedup (~60× extrapolated from the
-baseline's fitted power law) — and steepens the scaling exponent from
-α ≈ 0.21 to α ≈ 0.50.** Val loss at 80 s: **1.665** vs baseline **2.191**.
-The trust-region campaign then improved on combo itself (see
-`results/tr_log.md`).
+measured >8× effective-training-time speedup — and the trust-region campaign
+improved on it further: `tr_best` hits **1.6155** at 80 s vs baseline
+**2.191**, steepening the scaling exponent from α ≈ 0.21 to α ≈ 0.75.** Full
+decision log in [`results/tr_log.md`](results/tr_log.md).
 
 ![scaling laws](results/scaling.png)
 
@@ -90,7 +94,8 @@ variant's loss at 80 s, from the baseline fit (1 seed, M1 Pro / MPS):
 
 | variant | L @ 80s | fitted α | eff. time × |
 |---|---|---|---|
-| **combo (stack of winners)** | **1.665** | 0.50 | **~62× (extrap.)** |
+| **tr_best (trust-region result)** | **1.616** | 0.75 | **~118× (extrap.)** |
+| combo (greedy stack of winners) | 1.665 | 0.50 | ~62× (extrap.) |
 | lr 3e-3 | 1.951 | 0.11 | 4.5× |
 | rotary | 1.967 | 0.56 | 4.0× |
 | lr 1e-3 | 2.076 | 0.09 | 2.0× |
