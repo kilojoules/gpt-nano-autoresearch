@@ -30,7 +30,24 @@ disagreements concentrated exactly where it hurts:
 | LR 3e-3 | best single change | best single change (transfer ✓) |
 
 A 10 s-fidelity autoresearch loop would have *discarded rotary* — the
-second-most-valuable improvement found in the whole sweep. Architecture
+second-most-valuable improvement found in the whole sweep.
+
+![counterexample](results/counterexample.png)
+
+And the failure runs in **both directions**. At real campaign step sizes the
+cheap signal also produces false positives — in v2's campaign, iteration 4's
+surrogate predicted its candidate was **+0.008 better** and the replicated
+80 s truth measured it **−0.004 worse** (the CI acceptance test rejected it):
+
+| change / decision | cheap verdict | replicated 80 s truth | outcome |
+|---|---|---|---|
+| rotary | −0.006 (looks worse) | **+0.224 better** | false negative — a winner nearly discarded |
+| RMSNorm+SwiGLU | −0.083 (looks worse) | +0.069 better | false negative |
+| v1 iteration 2 | −0.023 (predicted worse) | +0.014 better | false negative — v1 confirmed anyway and got lucky |
+| **v2 iteration 4** | **+0.008 (predicted better)** | **−0.004 worse** | **false positive — caught by the CI test** |
+| v1 iteration 1 | +0.081 predicted | +0.009 | 9× over-promise, accepted |
+
+(Full quadrant table: `python make_counterexample.py`.) Architecture
 changes systematically look like regressions at low fidelity (they slow down
 early optimization) and pay off at high fidelity. Hyperparameter changes
 transfer better. The cheap judge is not wrong *uniformly*; it is wrong
