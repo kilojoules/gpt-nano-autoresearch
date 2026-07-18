@@ -109,6 +109,40 @@ low-fidelity autoresearch loop makes silently, made measurable — and why
 this repo wraps the loop in trust-region distrust logic (§ below).
 (Regenerate: `python make_counterexample.py`.)
 
+## Did the trust region work? The replicated verdict
+
+**Decision-level** (one ~50-min v2 campaign with the learned gbar metric,
+replicated CI acceptance, fresh incumbent estimates):
+
+- 2 of 5 iterations **skipped the confirm entirely** (surrogate predicted no
+  in-region gain) — v1 had wasted 5/6 confirm budgets exactly there.
+- Iteration 3: a +0.0027 "improvement" correctly **held below the CI bar**
+  (threshold 0.0131) — v1's margin would have accepted it.
+- Iteration 4: a **false positive caught** — surrogate predicted +0.008, the
+  replicated truth measured −0.004, rejected.
+- Iteration 5: the first **certified accept** — +0.0158 ≥ threshold 0.0125,
+  n=2 paired seeds (batch 154, lr 2.9e-3, wd 0.0995).
+- Final poll: **1-flip local optimality certified** (LCB margin 0.019); the
+  rmsnorm-off flip measured +0.012 — promising but below the 1-seed bar, and
+  it is the same move v1 had adopted.
+
+**Outcome-level** (val loss @ 80 s, fresh replicate seeds):
+
+| recipe | mean ± sd (n) | vs greedy combo |
+|---|---|---|
+| greedy combo | 1.6615 ± 0.0114 (7) | — |
+| v1 trust region (uncertified accepts) | **1.6327** ± 0.0169 (5) | −0.029, z ≈ 3.3 — real |
+| v2 trust region (certified accepts) | 1.6489 ± 0.0060 (3) | −0.013, z ≈ 2.3 — real |
+
+Both trust-region campaigns beat the greedy stack under replication. The
+honest trade-off: v1's risk-taking gained more ground than v2's certification
+(Δ ≈ 0.016, z ≈ 2.0) in these short campaigns — v1's *individual* accepts
+were noise-sized bets that happened to compound well, and only replication
+after the fact could tell; v2 paid part of its budget for the guarantee that
+every accepted step is real and finished with a certificate instead of a
+hope. At larger fidelity gaps and candidate volumes the false-positive rate
+v1 tolerates compounds against it (see the counterexample figure).
+
 ## Flagship result
 
 ![time to match quality](results/headline.png)
@@ -123,7 +157,8 @@ batch 128) reaches the baseline's 80-second loss in under 10 seconds — a
 measured >8× effective-training-time speedup — and the trust-region campaign
 improved on it further: `tr_best` hits **1.6155** at 80 s vs baseline
 **2.191**, steepening the scaling exponent from α ≈ 0.21 to α ≈ 0.75.** Full
-decision log in [`results/tr_log.md`](results/tr_log.md).
+decision log in [`results/tr_log.md`](results/tr_log.md). (Single-seed
+numbers; the replicated three-way verdict is in the section above.)
 
 ![scaling laws](results/scaling.png)
 

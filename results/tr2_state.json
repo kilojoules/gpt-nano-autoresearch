@@ -1,0 +1,91 @@
+{
+  "incumbent": {
+    "lr": 0.0029033360602207098,
+    "batch_size": 154,
+    "weight_decay": 0.09952909169329417,
+    "dropout": 0.0,
+    "rotary": true,
+    "rmsnorm": true,
+    "swiglu": true,
+    "weight_tying": false,
+    "cosine": false
+  },
+  "F_inc": 1.6457950000000001,
+  "n_inc": 2,
+  "delta": 0.04,
+  "L_inf": 1.4969635379242385,
+  "history": [
+    {
+      "iter": 1,
+      "delta": 0.15,
+      "action": "skip",
+      "pred_improve": -0.0036
+    },
+    {
+      "iter": 2,
+      "delta": 0.09,
+      "action": "skip",
+      "pred_improve": -0.0431
+    },
+    {
+      "iter": 3,
+      "delta": 0.045,
+      "pred_improve": 0.0006,
+      "improve": 0.0027,
+      "threshold": 0.0131,
+      "rho": null,
+      "accepted": false,
+      "config": {
+        "lr": 0.00284,
+        "batch_size": 131.0,
+        "weight_decay": 0.077053,
+        "dropout": 0.0,
+        "rotary": true,
+        "rmsnorm": false,
+        "swiglu": true,
+        "weight_tying": false,
+        "cosine": false
+      }
+    },
+    {
+      "iter": 4,
+      "delta": 0.04,
+      "pred_improve": 0.0079,
+      "improve": -0.0035,
+      "threshold": 0.0128,
+      "rho": null,
+      "accepted": false,
+      "config": {
+        "lr": 0.003775,
+        "batch_size": 130.0,
+        "weight_decay": 0.137607,
+        "dropout": 0.016445,
+        "rotary": true,
+        "rmsnorm": true,
+        "swiglu": true,
+        "weight_tying": false,
+        "cosine": false
+      }
+    },
+    {
+      "iter": 5,
+      "delta": 0.04,
+      "pred_improve": 0.0013,
+      "improve": 0.0158,
+      "threshold": 0.0125,
+      "rho": null,
+      "accepted": true,
+      "config": {
+        "lr": 0.002903,
+        "batch_size": 154.0,
+        "weight_decay": 0.099529,
+        "dropout": 0.0,
+        "rotary": true,
+        "rmsnorm": true,
+        "swiglu": true,
+        "weight_tying": false,
+        "cosine": false
+      }
+    }
+  ]
+}
