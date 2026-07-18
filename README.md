@@ -51,6 +51,52 @@ worse, and tying costs capacity at 48-dim. Full numbers in
   loss) points and report each improvement as an **effective time multiplier**
   vs the baseline curve.
 
+## Trust-region autoresearch
+
+`trust_region.py` recasts the research loop as a trust-region method:
+
+| TR concept | Here |
+|---|---|
+| expensive objective f(x) | val loss of config x at the confirm budget (80 s) |
+| surrogate model m(x) | 10 s + 20 s runs → power-law fit (L∞ pinned from incumbent) → extrapolate to 80 s |
+| trust radius Δ | max config step per iter: LR/batch/wd move ≤ ×2^Δ (log-space), dropout ±0.05Δ, ≤ 1–2 flag flips |
+| ratio test ρ | actual 80 s improvement ÷ surrogate-predicted improvement |
+| radius update | ρ ≥ 0.75 → Δ×2; ρ < 0.25 → Δ/2 and reject |
+
+So the search stays aggressive while short-budget results extrapolate reliably,
+and turns cautious exactly when the scaling-law surrogate stops predicting.
+
+**Open question — we're optimizing functions, not numbers.** Each config
+produces a whole curve L(t), so the "right" trust region is genuinely
+underdetermined, and several axes are pluggable:
+
+- **Objective functional** (`--objective`): `confirm` scalarizes at t\* = 80 s;
+  `integral` averages the curve over the measured budget grid. Other options
+  worth trying: maximize the fitted exponent α subject to no short-budget
+  regression, or minimize *predicted* loss at a budget beyond the grid.
+- **Where the region lives**: the default bounds steps in *config space*, but
+  config distance is a poor proxy for behavior change (one boolean flip can
+  move the curve more than any LR nudge — the same reason TRPO bounds KL
+  between policies rather than parameter distance). `--behav-delta D` adds a
+  *function-space* region: candidates whose 10 s loss deviates from the
+  incumbent's by more than D (in either direction) are screened out before any
+  confirm budget is spent.
+- **Surrogate**: ours is a physics-informed power law per candidate. The
+  Bayesian-optimization version would be a joint GP over (config, budget) —
+  multi-fidelity BO / freeze-thaw; with a maintained trust radius that is
+  essentially TuRBO with a scaling-law kernel.
+- **ρ for curves**: a scalar ratio at t\* now; comparing the predicted vs
+  measured *curve* (fit residuals at the confirm points) would grade the
+  surrogate as a function approximator instead.
+
+```bash
+python trust_region.py --iters 6 --candidates 5 --behav-delta 0.3
+```
+
+Outputs: `results/tr_log.md` (full decision log), `results/tr_state.json`
+(resume state), and a `tr_best` sweep appended to `results/results.jsonl` so
+`analyze.py` places it on the scaling plot.
+
 ## Files
 
 | file | what it does |
@@ -61,6 +107,7 @@ worse, and tying costs capacity at 48-dim. Full numbers in
 | `sweep.py` | grid of variants × budgets (subprocess-isolated) |
 | `analyze.py` | power-law fits, effective-speedup table, log-log plot, report.md |
 | `autoresearch.py` | the automated loop: propose → test cheap → adopt best → repeat |
+| `trust_region.py` | trust-region variant of the loop (surrogate + radius + ρ test) |
 
 ## Quickstart
 
