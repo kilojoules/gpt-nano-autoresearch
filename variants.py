@@ -46,6 +46,13 @@ VARIANTS = {
                 "wall-clock second; fewer optimizer steps)",
         "train": {"batch_size": 128},
     },
+    "combo": {
+        "desc": "stack of the round-1 winners: lr 3e-3 + rotary + "
+                "RMSNorm/SwiGLU + dropout 0 + batch 128 (cosine and weight "
+                "tying excluded — both hurt at these budgets)",
+        "model": {"rotary": True, "rmsnorm": True, "swiglu": True, "dropout": 0.0},
+        "train": {"lr": 3e-3, "batch_size": 128},
+    },
 }
 
 

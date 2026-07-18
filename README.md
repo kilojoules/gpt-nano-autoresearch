@@ -8,6 +8,37 @@ The core question: when you change the model or training recipe, does the
 improvement (a) shift the loss-vs-time curve down, (b) change its slope, and
 (c) how much *effective extra training time* is it worth?
 
+## Flagship result
+
+**The winning stack (`combo` = lr 3e-3 + rotary + RMSNorm/SwiGLU + dropout 0 +
+batch 128) reaches the baseline's 80-second loss in under 10 seconds — a
+measured >8× effective-training-time speedup (~60× extrapolated from the
+baseline's fitted power law) — and steepens the scaling exponent from
+α ≈ 0.21 to α ≈ 0.50.** Val loss at 80 s: **1.665** vs baseline **2.191**.
+
+![scaling laws](results/scaling.png)
+
+Effective time multiplier = training time the baseline would need to match the
+variant's loss at 80 s, from the baseline fit (1 seed, M1 Pro / MPS):
+
+| variant | L @ 80s | fitted α | eff. time × |
+|---|---|---|---|
+| **combo (stack of winners)** | **1.665** | 0.50 | **~62× (extrap.)** |
+| lr 3e-3 | 1.951 | 0.11 | 4.5× |
+| rotary | 1.967 | 0.56 | 4.0× |
+| lr 1e-3 | 2.076 | 0.09 | 2.0× |
+| RMSNorm + SwiGLU | 2.122 | 0.25 | 1.6× |
+| dropout 0 | 2.123 | 0.11 | 1.5× |
+| batch 128 | 2.130 | 0.11 | 1.5× |
+| baseline | 2.191 | 0.21 | 1× |
+| cosine LR decay | 2.327 | 0.88 | 0.56× |
+| weight tying | 2.327 | 0.62 | 0.55× |
+
+Two negative results worth knowing: budget-aware **cosine decay** and **weight
+tying** both *hurt* in this regime — decaying a 5e-4 LR makes undertraining
+worse, and tying costs capacity at 48-dim. Full numbers in
+[`results/report.md`](results/report.md).
+
 ## Method
 
 - Each run trains under a fixed training-time budget; eval is off the clock

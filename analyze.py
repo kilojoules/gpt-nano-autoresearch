@@ -91,9 +91,12 @@ def analyze(results_path, plot_top=5, out_dir=None, plot_include=None):
     t_max = max(max(f["budgets"]) for f in fits.values())
     base = fits.get("baseline")
 
-    # effective time multiplier: baseline time needed to reach variant's L(t_max)
+    # effective time multiplier: baseline time needed to reach variant's loss
+    # at the variant's own largest measured budget
     for v, f in fits.items():
-        f["loss_at_tmax"] = by_variant[v][t_max]
+        v_tmax = max(f["budgets"])
+        f["t_max"] = v_tmax
+        f["loss_at_tmax"] = by_variant[v][v_tmax]
         f["speedup"] = None
         if base and v != "baseline":
             target = f["loss_at_tmax"]
@@ -102,11 +105,11 @@ def analyze(results_path, plot_top=5, out_dir=None, plot_include=None):
             def g(t):
                 return power_law(t, bL, bA, ba) - target
             try:
-                if g(t_max) > 0:  # baseline hasn't reached target by t_max: extrapolate
-                    t_eq = brentq(g, t_max, 1e7) if g(1e7) < 0 else float("inf")
+                if g(v_tmax) > 0:  # baseline hasn't reached target: extrapolate
+                    t_eq = brentq(g, v_tmax, 1e7) if g(1e7) < 0 else float("inf")
                 else:
-                    t_eq = brentq(g, 1e-2, t_max)
-                f["speedup"] = t_eq / t_max
+                    t_eq = brentq(g, 1e-2, v_tmax)
+                f["speedup"] = t_eq / v_tmax
             except Exception:
                 pass
 
