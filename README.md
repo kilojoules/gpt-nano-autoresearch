@@ -56,6 +56,22 @@ above, made one certified accept (+0.0158 ≥ threshold 0.0125, paired seeds),
 and closed by certifying 1-flip local optimality. Full decision logs:
 `results/tr_log.md`, `results/tr2_log.md`.
 
+**Search efficiency, judged by replicated truth** — three arms with the
+same proposer and start; single-fidelity vs multi-fidelity isolates the
+fidelity schedule under the same CI acceptance, with uncertified v1 as
+reference:
+
+![money shot](results/moneyshot.png)
+
+The uncertified multi-fidelity arm was the compute-efficiency winner (past
+the single-fidelity endpoint after 570 s — but its steps needed
+after-the-fact replication to believe, and its it1 accept was optimistic by
+0.006). Certification is what costs: v2 spent ~4× v1's compute for a
+smaller, guaranteed gain, landing at single-fidelity's level. The cheap
+screen pays; the trust costs; at larger fidelity gaps both effects grow.
+The same loop also runs unchanged on DTU's gbar cluster
+([`results/gbar/`](results/gbar/) — CPU login node, thread-pinned).
+
 **What the search bought**, as time-to-match-quality (solve each fitted
 scaling law for the training time reaching baseline's 80 s loss):
 

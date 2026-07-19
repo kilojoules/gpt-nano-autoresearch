@@ -1,0 +1,162 @@
+{
+  "incumbent": {
+    "lr": 0.0029982928089347153,
+    "batch_size": 147,
+    "weight_decay": 0.07662992688161378,
+    "dropout": 0.010391779425394357,
+    "rotary": true,
+    "rmsnorm": true,
+    "swiglu": true,
+    "weight_tying": false,
+    "cosine": false
+  },
+  "F_inc": 1.645286,
+  "n_inc": 5,
+  "spent_s": 2080.0,
+  "history": [
+    {
+      "iter": 1,
+      "spent_s": 400.0,
+      "delta": 0.125,
+      "improve": -0.0018,
+      "accepted": false,
+      "config": {
+        "lr": 0.00204,
+        "batch_size": 133.0,
+        "weight_decay": 0.009757,
+        "dropout": 0.0,
+        "rotary": true,
+        "rmsnorm": true,
+        "swiglu": true,
+        "weight_tying": false,
+        "cosine": false
+      }
+    },
+    {
+      "iter": 2,
+      "spent_s": 640.0,
+      "delta": 0.0625,
+      "improve": -0.0546,
+      "accepted": false,
+      "config": {
+        "lr": 0.002191,
+        "batch_size": 167.0,
+        "weight_decay": 0.199402,
+        "dropout": 0.009142,
+        "rotary": true,
+        "rmsnorm": false,
+        "swiglu": false,
+        "weight_tying": false,
+        "cosine": false
+      }
+    },
+    {
+      "iter": 3,
+      "spent_s": 880.0,
+      "delta": 0.04,
+      "improve": -0.0017,
+      "accepted": false,
+      "config": {
+        "lr": 0.002797,
+        "batch_size": 188.0,
+        "weight_decay": 0.116541,
+        "dropout": 0.032259,
+        "rotary": true,
+        "rmsnorm": true,
+        "swiglu": true,
+        "weight_tying": false,
+        "cosine": false
+      }
+    },
+    {
+      "iter": 4,
+      "spent_s": 1120.0,
+      "delta": 0.04,
+      "improve": 0.0106,
+      "accepted": false,
+      "config": {
+        "lr": 0.00341,
+        "batch_size": 144.0,
+        "weight_decay": 0.104156,
+        "dropout": 0.0,
+        "rotary": true,
+        "rmsnorm": true,
+        "swiglu": true,
+        "weight_tying": false,
+        "cosine": false
+      }
+    },
+    {
+      "iter": 5,
+      "spent_s": 1360.0,
+      "delta": 0.064,
+      "improve": 0.0192,
+      "accepted": true,
+      "config": {
+        "lr": 0.002998,
+        "batch_size": 147.0,
+        "weight_decay": 0.07663,
+        "dropout": 0.010392,
+        "rotary": true,
+        "rmsnorm": true,
+        "swiglu": true,
+        "weight_tying": false,
+        "cosine": false
+      }
+    },
+    {
+      "iter": 6,
+      "spent_s": 1600.0,
+      "delta": 0.04,
+      "improve": -0.0004,
+      "accepted": false,
+      "config": {
+        "lr": 0.003746,
+        "batch_size": 133.0,
+        "weight_decay": 0.082029,
+        "dropout": 0.003579,
+        "rotary": true,
+        "rmsnorm": true,
+        "swiglu": true,
+        "weight_tying": false,
+        "cosine": false
+      }
+    },
+    {
+      "iter": 7,
+      "spent_s": 1840.0,
+      "delta": 0.04,
+      "improve": -0.0181,
+      "accepted": false,
+      "config": {
+        "lr": 0.003345,
+        "batch_size": 132.0,
+        "weight_decay": 0.105665,
+        "dropout": 0.0,
+        "rotary": true,
+        "rmsnorm": true,
+        "swiglu": true,
+        "weight_tying": false,
+        "cosine": false
+      }
+    },
+    {
+      "iter": 8,
+      "spent_s": 2080.0,
+      "delta": 0.04,
+      "improve": -0.0145,
+      "accepted": false,
+      "config": {
+        "lr": 0.002917,
+        "batch_size": 129.0,
+        "weight_decay": 0.065891,
+        "dropout": 0.019875,
+        "rotary": true,
+        "rmsnorm": true,
+        "swiglu": true,
+        "weight_tying": false,
+        "cosine": false
+      }
+    }
+  ]
+}
