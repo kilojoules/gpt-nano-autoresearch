@@ -39,37 +39,47 @@ verified against primary sources).
 
 ## Results
 
-**Replicated verdict** (val loss @ 80 s, fresh seeds — the noise-robust numbers):
+**Replicated verdict** (val loss @ 80 s, fresh seeds). *Scope caveat: these
+z-values compare the specific **configs** each campaign found — they are
+valid config-vs-config statements. They are NOT search-policy comparisons:
+with one campaign trajectory per arm, arm-vs-arm efficiency claims are
+pilot-grade anecdotes until campaigns themselves are replicated (see the
+"toward a real experiment" note below).*
 
-| recipe | mean ± sd (n) | vs greedy |
+| recipe found | mean ± sd (n) | vs greedy config |
 |---|---|---|
 | baseline GPT-Nano | 2.191 (1) | — |
 | greedy autoresearch stack | 1.6615 ± 0.0114 (7) | — |
-| trust-region v1 (uncertified accepts) | **1.6327** ± 0.0169 (5) | z ≈ 3.3 |
-| trust-region v2 (certified accepts) | 1.6489 ± 0.0060 (3) | z ≈ 2.3 |
+| trust-region v1's config (uncertified search) | **1.6327** ± 0.0169 (5) | z ≈ 3.3 |
+| trust-region v2's config (certified search) | 1.6489 ± 0.0060 (3) | z ≈ 2.3 |
 
-Both trust-region campaigns beat the greedy stack. The quantified trade-off:
-v1's noise-sized bets compounded into more ground (Δ ≈ 0.016, z ≈ 2.0 over
-v2); v2 paid part of its budget for certificates — it skipped confirms the
-surrogate couldn't justify (v1 wasted 5/6 there), caught the false positive
-above, made one certified accept (+0.0158 ≥ threshold 0.0125, paired seeds),
-and closed by certifying 1-flip local optimality. Full decision logs:
-`results/tr_log.md`, `results/tr2_log.md`.
+Both found configs beat the greedy stack. In-campaign, v2 skipped confirms
+the surrogate couldn't justify (v1 wasted 5/6 there), caught the false
+positive above, and made one certified accept (+0.0158 ≥ threshold 0.0125,
+paired seeds). Its closing 1-seed flip poll is **not** an optimality
+certificate — retracted after review: one flip (rmsnorm-off) actually
+measured 0.012 *better*, and absence of a certified gain is not certified
+absence of gain; a real certificate needs n ≥ 4 per flip. Full decision
+logs: `results/tr_log.md`, `results/tr2_log.md`.
 
-**Search efficiency, judged by replicated truth** — three arms with the
-same proposer and start; single-fidelity vs multi-fidelity isolates the
-fidelity schedule under the same CI acceptance, with uncertified v1 as
-reference:
+**Search efficiency, judged by replicated truth** — three arms from the
+same start and proposal *distribution* (candidate throughput is
+policy-endogenous: SF looks at 1 candidate/iteration, v2 screens 4);
+single-fidelity vs v2 share the CI acceptance bar, uncertified v1 is the
+reference. One trajectory per arm — a pilot, not a verdict:
 
 ![money shot](results/moneyshot.png)
 
-The uncertified multi-fidelity arm was the compute-efficiency winner (past
-the single-fidelity endpoint after 570 s — but its steps needed
-after-the-fact replication to believe, and its it1 accept was optimistic by
-0.006). Certification is what costs: v2 spent ~4× v1's compute for a
-smaller, guaranteed gain, landing at single-fidelity's level. The cheap
-screen pays; the trust costs; at larger fidelity gaps both effects grow.
-The same loop also runs unchanged on DTU's gbar cluster
+Pilot observations, now promoted to *hypotheses* for a controlled
+experiment: the uncertified arm was the compute-efficiency winner (past the
+single-fidelity endpoint after 570 s; its it1 accept was optimistic by
+0.006 under replication). Certified multifidelity was Pareto-dominated —
+and the budget ledger suggests why: it spent 1200 s on screens to save
+320 s of confirms, a screen:confirm cost ratio of only ~2.7×. Hypothesis:
+screening value is governed by that ratio coupled to screen rank-fidelity,
+predicting an interior optimum in screen fidelity — testable with a
+cost-ratio sweep at n ≈ 8 campaign replicates per arm (~a weekend on a
+cluster). The same loop already runs unchanged on DTU's gbar cluster
 ([`results/gbar/`](results/gbar/) — CPU login node, thread-pinned).
 
 **What the search bought**, as time-to-match-quality (solve each fitted

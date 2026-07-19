@@ -131,9 +131,10 @@ def main():
     for s in ["left", "bottom"]:
         ax.spines[s].set_color(AXIS)
     ax.tick_params(colors=MUTED, labelsize=9)
-    ax.set_title("Search efficiency, judged by replicated truth — same proposer and start.\n"
-                 "SF vs v2 isolate the fidelity schedule (same CI bar); v1 is the uncertified reference",
-                 loc="left", color=INK, fontsize=11)
+    ax.set_title("Search efficiency by replicated truth — same proposal distribution and start;\n"
+                 "SF vs v2 share the CI bar (throughput is policy-endogenous); v1 = uncertified reference.\n"
+                 "One trajectory per arm: pilot, not verdict.",
+                 loc="left", color=INK, fontsize=10.5)
     fig.tight_layout()
     out = os.path.join(RESULTS, "moneyshot.png")
     fig.savefig(out, facecolor=SURFACE, bbox_inches="tight")
