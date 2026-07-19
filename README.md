@@ -239,6 +239,27 @@ trajectories.
 ## Quickstart
 
 ```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt   # torch, numpy, scipy, matplotlib — nothing else
+```
+
+The tiny-Shakespeare dataset is committed (`data/tinyshakespeare.txt`), so
+there is no download step. Runs use Apple MPS when available, else CPU;
+pass `--device cuda` on NVIDIA machines.
+
+**Reproducibility notes.** Everything is seeded (`--seed`; the eval set is
+fixed across all runs), but two irreducible noise sources remain: budgets
+are *wall-clock*, so step counts vary with machine speed and load, and MPS
+kernels are not bitwise deterministic. Same-config 80 s runs vary by
+sd ≈ 0.0095 nats on an M1 Pro (measured in `fit_metric.py`). Expect the
+*qualitative* results — variant rankings, fidelity inversions, campaign
+decisions — to reproduce, and exact losses to move at the ±0.01–0.02 level;
+on faster hardware every budget buys more steps, so absolute losses drop
+but the comparisons stand. The replicated verdicts in the README are the
+noise-robust numbers. Every figure regenerates from committed data:
+`python analyze.py && python make_headline.py && python make_counterexample.py`.
+
+```bash
 # one run
 python train.py --variant baseline --budget 20
 

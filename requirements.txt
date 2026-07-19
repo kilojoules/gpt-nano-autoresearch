@@ -1,0 +1,6 @@
+# Tested versions (Python 3.9.19, macOS / Apple M1 Pro).
+# Looser versions likely work; these are what produced results/.
+torch==2.2.2
+numpy==1.26.4
+scipy==1.13.1
+matplotlib==3.9.4
